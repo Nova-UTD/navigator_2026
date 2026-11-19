@@ -7,47 +7,11 @@ from launch import LaunchDescription
 
 sys.path.append(path.abspath("/navigator/"))
 from launches.launch_node_definitions import *
-from launches.utils import (
-    err_fatal,
-    try_get_launch_description_from_include,
-    IncludeError,
-)
+
 
 def generate_launch_description():
-    # Include 3D object detection launch file and extract launch entities for reuse.
-    try:
-        object3d_launch_description = try_get_launch_description_from_include(
-            "launches/launch.object3d.py"
-        )
-    except IncludeError as e:
-        err_fatal(e)
-
-    object3d_launch_entities = object3d_launch_description.describe_sub_entities()
-    
     return LaunchDescription([
-        # image_segmentation,
-        # semantic_projection,
-        # ground_seg,                         # /lidar --> /lidar/filtered
-        # static_grid,                        # /lidar/filtered --> /grid/occupancy/current
-        # *object3d_launch_entities,
+        ground_seg,                  # /lidar --> /lidar/filtered
         # traffic_light_detector,
-        # prednet_inference,
-        # driveable_area,
-        # pedestrian_intent_to_enter_road,
-        # road_signs_classifier,
-        # image_segmentation, 
-        # depth_processing, 
-        # occupancy_grid_node,
-        # lane_type_detector,
-        # pedestrian_skeleton
-        # road_user_detector,      # YOLO model required - disabled until model present
-        image_segmentation,        # mmseg/PSPNet, now installed -- runs on cuda:1
-        ground_seg,
-        static_grid,
-        hybrid_grid,
-        perception_drivable_grid,
-        hybrid_drivable_grid,
-        yolopv2_drivable_grid,
-        route_costmap_v2,
-        yolopv2_lane,
+        # road_user_detector,        # YOLO model required - disabled until model present
     ])

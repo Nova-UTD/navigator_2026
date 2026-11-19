@@ -1,9 +1,9 @@
 version: "2.3"
-name: navigator
+name: navigator_2026
 services:
   navigator:
     image: navigator
-    container_name: navigator_${USER}
+    container_name: navigator_2026_${USER}
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,7 +15,7 @@ services:
     runtime: nvidia 
 
     image: navigator
-    container_name: navigator_carla_${USER}
+    container_name: navigator_2026_carla_${USER}
 
     volumes:
       - type: bind
@@ -75,7 +75,7 @@ services:
     tty: true
 
     image: navigator
-    container_name: navigator_obc_${USER}
+    container_name: navigator_2026_obc_${USER}
 
     volumes:
       - type: bind

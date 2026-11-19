@@ -20,9 +20,9 @@
         "/navigator/install/delphi_esr_msgs/include/**",
         "/navigator/install/carla_msgs/include/**",
         "/opt/ros/humble/include/**",
-        "/navigator/src/mapping/map_management/include/**",
+        "/navigator/src/map/lane_map/include/**",
         "/navigator/src/perception/ground_seg/include/**",
-        "/navigator/src/perception/occupancy_cpp/include/**",
+        "/navigator/src/world_model/occupancy_cpp/include/**",
         "/navigator/src/tools/libopendrive/include/**",
         "/navigator/src/tools/voltron_test_utils/include/**"
         // IMPORTANT: Never add /usr/include/** to the includePath because system includes are order dependent.
