@@ -6,7 +6,7 @@ Author:    Will Heitman (w at heit.mn)
 Subscribes to:
 /cameras/stitched (sensor_msgs/Image)
 /gnss/odometry (nav_msgs/Odometry)
-/grid/occupancy/current (nav_msgs/OccupancyGrid)
+/world/static_grid (nav_msgs/OccupancyGrid)
 
 Converts these to numpy arrays and saves them to a .npz file
 
@@ -142,7 +142,7 @@ class recorder(Node):
         self.setUpDirectory()
 
         current_occ_grid_sub = self.create_subscription(
-            OccupancyGrid, '/grid/occupancy/current', self.currentOccCb, 10)
+            OccupancyGrid, '/world/static_grid', self.currentOccCb, 10)
 
         camera_sub = self.create_subscription(
             Image, '/cameras/camera0', self.camCb, 10)

@@ -11,7 +11,7 @@ from launches.launch_node_definitions import *
 
 def generate_launch_description():
     return LaunchDescription([
-        ground_seg,                  # /lidar --> /lidar/filtered
+        lidar_ground_filter,         # /lidar --> /perception/lidar/nonground
         # traffic_light_detector,
-        # road_user_detector,        # YOLO model required - disabled until model present
+        # camera_object_detector,    # YOLO model required - disabled until model present
     ])

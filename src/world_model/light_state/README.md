@@ -27,7 +27,7 @@ It matches CARLA's true light colour in more than 99% of frames in the traffic-l
 >
 > To read the code without a browser: `git show 86a6bde:<path>`.
 
-- **The detector it reads from:** `src/perception/traffic_light_detector/traffic_light_detector/traffic_light_node.py` (in this repo), especially `image_callback` (lines 37–83). Shows what a detection contains.
+- **The detector it reads from:** `src/perception/traffic_light_detector/traffic_light_detector/traffic_light_detector.py` (in this repo), especially `image_callback` (lines 37–83). Shows what a detection contains.
 - **How the old stack used light detections:** [`intersection_manager.py`, lines 77–79](https://github.com/Nova-UTD/navigator_2026/blob/86a6bde1a7b2f442c597d56593a7c792a78d1f86/src/planning/intersection_manager/intersection_manager/intersection_manager.py#L77-L79) and [lines 131–161](https://github.com/Nova-UTD/navigator_2026/blob/86a6bde1a7b2f442c597d56593a7c792a78d1f86/src/planning/intersection_manager/intersection_manager/intersection_manager.py#L131-L161).
 
 Matching a light to a lane is new work: nothing in the old stack did it.

@@ -26,7 +26,7 @@ A car driving into a curve is predicted to follow the curve, not drive off the r
 >
 > To read the code without a browser: `git show 86a6bde:<path>`.
 
-- **Straight-line prediction:** `state_prediction` in `src/world_model/multi_object_tracker_3d/multi_object_tracker_3d/trajectory.py` (in this repo). The tracker's Kalman prediction step; the same idea works for people.
+- **Straight-line prediction:** `state_prediction` in `src/world_model/object_tracker/object_tracker/trajectory.py` (in this repo). The tracker's Kalman prediction step; the same idea works for people.
 - **Relating objects to the route:** [`frenet_utils.py`, lines 66–91](https://github.com/Nova-UTD/navigator_2026/blob/86a6bde1a7b2f442c597d56593a7c792a78d1f86/src/planning/navigator_lane_change/navigator_lane_change/frenet_utils.py#L66-L91). Use the `nova_common` version once it exists.
 
 ## Old code to skip
