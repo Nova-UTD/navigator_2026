@@ -282,7 +282,7 @@ class player(Node):
         self.tf_broadcaster = TransformBroadcaster(self)
 
         self.current_occ_grid_pub = self.create_publisher(
-            OccupancyGrid, '/grid/occupancy/current', 10)
+            OccupancyGrid, '/world/static_grid', 10)
 
         self.camera_pub = self.create_publisher(
             Image, '/cameras/stitched', 10)

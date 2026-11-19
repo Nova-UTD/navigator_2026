@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
-    "name": "Navigator Carla Docker Container",
+    "name": "Navigator 2026",
     "dockerComposeFile": [
         "../docker-compose.yml"
     ],
@@ -14,7 +14,11 @@
     "runServices": [
         "navigator_carla"
     ],
-    "postAttachCommand": "/opt/entrypoint.sh",
+    // Runs on the host before connecting: find a working X display for RViz (written to .x11/).
+    "initializeCommand": "docker/x11.sh",
+    // Pass a command so entrypoint.sh exits instead of `exec bash` (which never returns and hangs the attach).
+    // Uses the repo's copy so changes apply without rebuilding the image.
+    "postAttachCommand": "bash /navigator/docker/entrypoint.sh true",
     // Configure tool-specific properties.
     "customizations": {
         "vscode": {

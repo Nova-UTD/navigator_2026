@@ -27,9 +27,9 @@ costmap_recorder = Node(
     executable="costmap_recorder"
 )
 
-ground_seg = Node(
-    package='ground_seg',
-    executable='ground_segmentation_exe',
+lidar_ground_filter = Node(
+    package='lidar_ground_filter',
+    executable='lidar_ground_filter',
     parameters=[
         {'sensitivity': 0.13},
     ]
@@ -88,10 +88,14 @@ sounds = Node(
     executable='sound_node'
 )
 
-static_grid = Node(
-    package='occupancy_cpp',
-    executable='static_grid_exe',
-    remappings=[('/grid/occupancy/current', '/grid/occupancy/lidar')]
+static_obstacle_grid = Node(
+    package='static_obstacle_grid',
+    executable='static_obstacle_grid'
+)
+
+object_tracker = Node(
+    package='object_tracker',
+    executable='object_tracker'
 )
 
 web_bridge = Node(
@@ -101,12 +105,12 @@ web_bridge = Node(
 
 traffic_light_detector = Node(
     package='traffic_light_detector',
-    executable='traffic_light_node'
+    executable='traffic_light_detector'
 )
     
-road_user_detector = Node(
-    package='road_user_detection',
-    executable='road_user_detection'
+camera_object_detector = Node(
+    package='camera_object_detector',
+    executable='camera_object_detector'
 )
 
 

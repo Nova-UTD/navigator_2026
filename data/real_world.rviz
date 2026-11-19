@@ -338,13 +338,13 @@ Visualization Manager:
             Durability Policy: Volatile
             History Policy: Keep Last
             Reliability Policy: Reliable
-            Value: /grid/occupancy/current
+            Value: /world/static_grid
           Update Topic:
             Depth: 5
             Durability Policy: Volatile
             History Policy: Keep Last
             Reliability Policy: Reliable
-            Value: /grid/occupancy/current_updates
+            Value: /world/static_grid_updates
           Use Timestamp: false
           Value: true
         - Alpha: 0.699999988079071

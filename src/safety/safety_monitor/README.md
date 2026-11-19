@@ -10,7 +10,7 @@ The last check before a command reaches the car. If the LiDAR sees something in 
 |---|---|---|
 | Listens to | `/control/command` | What `trajectory_follower` wants to do |
 | Listens to | `/planning/trajectory` | The path we're about to drive |
-| Listens to | `/perception/lidar/nonground` | LiDAR points with the road removed (today called `/lidar/filtered`) |
+| Listens to | `/perception/lidar/nonground` | LiDAR points with the road removed |
 | Listens to | `/system/health` | Whether every node is still running |
 | Listens to | `/world/ego` | Our speed |
 | Publishes | `/vehicle/control` | The command that goes to the car |

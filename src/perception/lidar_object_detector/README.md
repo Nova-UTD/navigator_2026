@@ -8,7 +8,7 @@ Takes the LiDAR points that aren't road and groups points that are close togethe
 ## Topics
 | | Topic | What's on it |
 |---|---|---|
-| Listens to | `/perception/lidar/nonground` | LiDAR points with the road removed (today called `/lidar/filtered`) |
+| Listens to | `/perception/lidar/nonground` | LiDAR points with the road removed |
 | Publishes | `/perception/lidar/objects` | A 3D box for every object |
 
 ## How it works
@@ -27,6 +27,6 @@ It boxes every car and person within 30 m in the Town02 scenarios (at least 95% 
 >
 > To read the code without a browser: `git show 86a6bde:<path>`.
 
-- **A C++ PCL node to copy the setup from:** `src/perception/ground_seg` (in this repo). It produces this node's input; copy its package layout, point-cloud conversion and CMake setup.
+- **A C++ PCL node to copy the setup from:** `src/perception/lidar_ground_filter` (in this repo). It produces this node's input; copy its package layout, point-cloud conversion and CMake setup.
 - **Filling in the box message:** [`lidar_detection_node.py`, lines 99–123](https://github.com/Nova-UTD/navigator_2026/blob/86a6bde1a7b2f442c597d56593a7c792a78d1f86/src/perception/lidar_detection/lidar_detection/lidar_detection_node.py#L99-L123) (old machine-learning detector). Only for how it filled in `Object3DArray`.
 - **Drawing boxes in RViz:** [`object_visualizer_node.py`, lines 34–91](https://github.com/Nova-UTD/navigator_2026/blob/86a6bde1a7b2f442c597d56593a7c792a78d1f86/src/perception/visualizer/visualizer/object_visualizer_node.py#L34-L91). A start for `viz`.

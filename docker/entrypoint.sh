@@ -32,7 +32,15 @@ source /navigator/install/setup.bash
 # source /workspace/install/setup.bash
 
 echo "🔧 Setting up aliases..."
-echo "alias navigator=\"python3 /navigator/navigator.py\"" >> ~/.bashrc
+grep -q 'alias navigator=' ~/.bashrc || echo "alias navigator=\"python3 /navigator/navigator.py\"" >> ~/.bashrc
+
+# X display for RViz, found on the host by docker/x11.sh. Sourced from .bashrc too so every new
+# terminal (including VS Code's) picks up the latest one without recreating the container.
+echo "🖥️  Setting up display..."
+X11_ENV='[ -s /navigator/.x11/env ] && source /navigator/.x11/env'
+grep -qF "$X11_ENV" ~/.bashrc || echo "$X11_ENV" >> ~/.bashrc
+eval "$X11_ENV"
+[ -n "$DISPLAY" ] || echo "⚠️  No X display set; RViz won't open. Run docker/x11.sh on the host."
 
 echo "👍 Finished environment setup"
 

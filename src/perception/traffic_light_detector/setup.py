@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'traffic_light_node = traffic_light_detector.traffic_light_node:main'
+            'traffic_light_detector = traffic_light_detector.traffic_light_detector:main'
         ],
     },
 )

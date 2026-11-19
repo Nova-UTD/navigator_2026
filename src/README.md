@@ -95,13 +95,13 @@ flowchart TD
 |---|---|---|
 | `common/` | `nova_common` | Not started |
 | `map/` | `lane_map` | Not started |
-| `perception/` | `ground_seg` | **Works.** Becomes `lidar_ground_filter` |
-| | `road_user_detection` | **Works** (needs its YOLO model). Becomes `camera_object_detector` |
+| `perception/` | `lidar_ground_filter` | **Works** |
+| | `camera_object_detector` | **Works** (needs its YOLO model) |
 | | `traffic_light_detector` | **Works** |
 | | `lidar_object_detector` | Not started |
 | `world_model/` | `ego_state` | Not started |
-| | `occupancy_cpp` | **Works.** Becomes `static_obstacle_grid` |
-| | `multi_object_tracker_3d` | **Works.** Becomes `object_tracker` |
+| | `static_obstacle_grid` | **Works** (still the old 2D grid) |
+| | `object_tracker` | **Works** (waits for `lidar_object_detector`) |
 | | `prediction`, `light_state` | Not started |
 | `behaviour/` | `behaviour_planner` | Not started |
 | `planning/` | `trajectory_planner` | Not started |
@@ -111,7 +111,7 @@ flowchart TD
 | `msg/` | message packages | Unchanged |
 | `tools/` | tools and bundled libraries | Unchanged |
 
-**"Works"** packages came over from the old stack whole and build as before. Their renames are done one at a time, in separate PRs.
+**"Works"** packages came over from the old stack whole and build as before, under their new names and topics. Their messages and logic still change as each one is reworked.
 
 **"Not started"** packages contain only a `README.md`. Each one explains what the package does, the topics it uses, how it should work, the starting settings, when it's done, and **exactly which old code to reuse** (file and line numbers). Read it before writing anything, so you don't start from scratch.
 
@@ -126,7 +126,7 @@ source install/setup.bash
 ros2 launch launches/launch.carla.py
 ```
 
-For now this starts only `ground_seg` and RViz, so the car doesn't move. New nodes are added to `launches/launch.vehicle.py` as they're written.
+For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move. New nodes are added to `launches/launch.vehicle.py` as they're written.
 
 ## Topics
 | Topic | Published by | Read by |
@@ -148,7 +148,7 @@ For now this starts only `ground_seg` and RViz, so the car doesn't move. New nod
 | `/vehicle/control` | `safety_monitor` | the car |
 | `/system/health` | `health_monitor` | `safety_monitor` |
 
-Topic names follow `/<layer>/<thing>`. Several of these are still under their old names in the packages that work today (for example `/lidar/filtered` instead of `/perception/lidar/nonground`); they change with each package's rename.
+Topic names follow `/<layer>/<thing>`.
 
 ---
 
