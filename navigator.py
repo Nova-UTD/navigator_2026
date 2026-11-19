@@ -24,10 +24,7 @@ def print(msg):
 
 
 LAUNCHES = {
-    "vehicle": "launches/launch.vehicle.py",
     "carla": "launches/launch.carla.py",
-    "perception": "launches/launch.perception.py",
-    "rviz": "launches/launch.rviz.py",
 }
 
 
