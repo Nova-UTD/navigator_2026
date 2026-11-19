@@ -126,7 +126,7 @@ source install/setup.bash
 ros2 launch launches/launch.carla.py
 ```
 
-For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move. New nodes are added to `launches/launch.vehicle.py` as they're written.
+For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move. New nodes are added to `launches/launch.carla.py` as they're written.
 
 ## Topics
 | Topic | Published by | Read by |

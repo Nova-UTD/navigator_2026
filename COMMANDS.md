@@ -9,8 +9,7 @@ Flags:
 . install/setup.bash
 
 # LAUNCHING COMMANDS
-navigator launch {vehicle, carla, perception}
-    Ex. navigator launch vehicle
+navigator launch carla
 
 # ROS COMMANDS
 rviz2

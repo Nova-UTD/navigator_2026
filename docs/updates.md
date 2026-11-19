@@ -5,14 +5,14 @@
 ## Running it
 **Nothing changed.** The steps in the [Navigator docs](https://nova-utd.github.io/navigator) still work: start CARLA, start the `carla_interface` bridge, run the Navigator container, build, and launch with `ros2 launch launches/launch.carla.py`.
 
-**The car doesn't drive yet.** Only the packages that work today are launched (`lidar_ground_filter` and RViz). New nodes are added to the launch files as they're written.
+**The car doesn't drive yet.** Only the packages that work today are launched (`lidar_ground_filter` and RViz). New nodes are added to `launches/launch.carla.py` as they're written.
 
 ### New shortcuts (optional)
 | Shortcut | What it does |
 |---|---|
 | `docker/shell.sh` | Run from the repo root on the host. Starts the Navigator container if it isn't running and opens a shell in it with ROS and Navigator sourced. Run it again from any terminal to get another shell in the same container. Use it instead of `docker compose run navigator_carla`, which leaves stopped containers behind that can make the VS Code Dev Container hang. `docker/shell.sh <command>` runs a single command instead. |
 | `docker/x11.sh` | Finds a working X display on the host (NoMachine, a desktop at the machine, `ssh -X`, VS Code) and shares it with the container, so RViz opens. `docker/shell.sh` and the Dev Container run it for you. If RViz stops opening, run it again on the host; no need to restart the container. |
-| `navigator launch <name>` | Inside the container: shortcut for `ros2 launch launches/launch.<name>.py`. Names: `carla`, `vehicle`, `perception`, `rviz`. |
+| `navigator launch carla` | Inside the container: shortcut for `ros2 launch launches/launch.carla.py`. |
 
 ### Containers
 The Docker Compose project and container names now include `2026` (for example `navigator_2026_carla_<user>`), so this repo's container runs alongside the old repo's without replacing it. In VS Code, the Dev Container is called **Navigator 2026**.
