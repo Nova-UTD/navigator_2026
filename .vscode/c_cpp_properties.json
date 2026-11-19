@@ -6,13 +6,10 @@
         "limitSymbolsToIncludedHeaders": false
       },
       "includePath": [
-        "/navigator/install/voltron_test_utils/include/**",
         "/navigator/install/rosbridge_test_msgs/include/**",
         "/navigator/install/rosbridge_msgs/include/**",
         "/navigator/install/rosapi_msgs/include/**",
         "/navigator/install/static_obstacle_grid/include/**",
-        "/navigator/install/map_management/include/**",
-        "/navigator/install/localization_cc/include/**",
         "/navigator/install/lidar_ground_filter/include/**",
         "/navigator/install/navigator_msgs/include/**",
         "/navigator/install/libopendrive/include/**",
@@ -23,8 +20,7 @@
         "/navigator/src/map/lane_map/include/**",
         "/navigator/src/perception/lidar_ground_filter/include/**",
         "/navigator/src/world_model/static_obstacle_grid/include/**",
-        "/navigator/src/tools/libopendrive/include/**",
-        "/navigator/src/tools/voltron_test_utils/include/**"
+        "/navigator/src/tools/libopendrive/include/**"
         // IMPORTANT: Never add /usr/include/** to the includePath because system includes are order dependent.
         // See this comment: https://github.com/microsoft/vscode-cpptools/issues/6114#issuecomment-692362735.
       ],
