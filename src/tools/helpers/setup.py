@@ -23,8 +23,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'routing_listener = helpers.routing_listener:main',
-            'routing_monitor = helpers.routing_monitor:main',
             'routing_hardcoded = helpers.routing_hardcoded:main'
         ],
     },

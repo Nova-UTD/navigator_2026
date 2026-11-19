@@ -22,11 +22,6 @@ clock = Node(
     executable='clock_node'
 )
 
-costmap_recorder = Node(
-    package="recording", 
-    executable="costmap_recorder"
-)
-
 lidar_ground_filter = Node(
     package='lidar_ground_filter',
     executable='lidar_ground_filter',
@@ -39,7 +34,6 @@ guardian = Node(
     package='guardian',
     executable='guardian_node'
 )
-
 
 joy_translator = Node(
     package='joy_translation',
@@ -56,21 +50,10 @@ recorder = Node(
     executable='recorder'
 )
 
-routing_monitor = Node(
-    package='helpers',
-    executable='routing_monitor'
-)
-
 routing_hardcoded = Node(
     package='helpers',
     executable='routing_hardcoded',
     parameters=[{'filename': "/navigator/Route.csv"}]
-)
-
-rqt = Node(
-    package='rqt_gui',
-    executable='rqt_gui',
-    arguments=["--perspective-file=/navigator/data/rqt.perspective"]
 )
 
 rviz = Node(
@@ -112,5 +95,4 @@ camera_object_detector = Node(
     package='camera_object_detector',
     executable='camera_object_detector'
 )
-
 

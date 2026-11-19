@@ -23,7 +23,6 @@ setup(
     entry_points={
         "console_scripts": [
             "recorder = recording.recorder:main",
-            "costmap_recorder = recording.costmap_recorder:main",
             "player = recording.player:main",
             "fix2geojson = recording.fix2geojson:main",
             "odom2tf = recording.odom2tf:main",
