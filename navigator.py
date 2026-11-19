@@ -27,9 +27,7 @@ LAUNCHES = {
     "vehicle": "launches/launch.vehicle.py",
     "carla": "launches/launch.carla.py",
     "perception": "launches/launch.perception.py",
-    "nav2": "launches/launch.nav2.py",
     "rviz": "launches/launch.rviz.py",
-    "map": "launches/launch.mapmanager.py"
 }
 
 
