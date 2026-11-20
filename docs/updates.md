@@ -22,7 +22,7 @@ The Docker Compose project and container names now include `2026` (for example `
 src/
   common/       nova_common
   map/          lane_map
-  perception/   lidar_ground_filter, lidar_object_detector, camera_object_detector, traffic_light_detector
+  perception/   lidar_ground_filter, voxel_3d, lidar_cluster, camera_object_detector, traffic_light_detector
   world_model/  ego_state, static_obstacle_grid, object_tracker, prediction, light_state
   behaviour/    behaviour_planner
   planning/     trajectory_planner
@@ -31,7 +31,7 @@ src/
   msg/          message packages (unchanged)
   tools/        tools and bundled libraries
 ```
-Packages that aren't built yet contain only a `README.md`: what the package does, its topics, how it should work, when it's done, and which old code to reuse (with file and line links). Read it before you start one.
+Packages that aren't built yet contain only a short `README.md` that links to the package's GitHub issue. The issue is the full spec: what the package does, its topics and messages, how it should work, how to test it, when it's done, and which old code to reuse (with file and line links). Read it before you start one. The [roadmap issue (#33)](https://github.com/Nova-UTD/navigator_2026/issues/33) lists every issue and what blocks what.
 
 ## Renamed packages, nodes and topics
 The packages kept from the old stack were renamed to match the new architecture. Their logic and message types are unchanged.

@@ -2,6 +2,8 @@
 
 This is the code for Navigator's new architecture. This page explains how the pieces fit together, what's built and what isn't, and how every package should be written.
 
+**Looking for something to work on?** Start with the [roadmap issue (#33)](https://github.com/Nova-UTD/navigator_2026/issues/33): it explains the shared ideas, shows what blocks what, and lists every issue. The [Navigator 2026 Roadmap project](https://github.com/orgs/Nova-UTD/projects/9) has them in the order to work on them. Each package's full spec is in its issue, linked in the table below.
+
 ## Why a new architecture
 The old stack drives well, but every module talked through 2D grids of numbers. A car, a curb and an overhanging branch all looked like "100", nothing remembered anything between frames, and every new behaviour became another grid or another if-branch.
 
@@ -10,20 +12,15 @@ The new stack is built in layers. Each layer has one job and talks to the next t
 | Layer | Job | Packages |
 |---|---|---|
 | **Map** | Knows the roads and the rules: lanes, the route from A to B, stop lines, lights, speed limits | `lane_map` |
-| **Perception** | What the sensors see in this frame, with no memory | `lidar_ground_filter`, `lidar_object_detector`, `camera_object_detector`, `traffic_light_detector` |
+| **Perception** | What the sensors see in this frame, with no memory | `lidar_ground_filter`, `voxel_3d`, `lidar_cluster`, `camera_object_detector`, `traffic_light_detector` |
 | **World model** | What's around us, remembered over time: tracked objects with IDs and speeds, where they're going, things that don't move, our own position, our traffic light | `ego_state`, `static_obstacle_grid`, `object_tracker`, `prediction`, `light_state` |
 | **Decide** | Turns the rules into limits, then picks the best safe trajectory | `behaviour_planner`, `trajectory_planner` |
 | **Act** | Drives the trajectory, and brakes if anything goes wrong | `trajectory_follower`, `safety_monitor`, `health_monitor` |
 
-**First goal:** drive from A to B on real lanes: follow cars, stop for pedestrians, pass parked cars when it's allowed, and obey lights and stop signs.
+**First goal:** drive from A to B on real lanes: follow cars, stop for pedestrians, pass parked cars when it's allowed, and obey lights and stop signs. On any map: a CARLA town, the campus, or anywhere else, with the same code.
 
 ## How the pieces connect
-![Architecture](architecture.png)
-
 Arrows are ROS topics. Every node from the world model down also reads `/world/ego` (left out of the picture to keep it readable).
-
-<details>
-<summary>Same diagram as Mermaid (renders on GitHub)</summary>
 
 ```mermaid
 flowchart TD
@@ -36,7 +33,8 @@ flowchart TD
   end
   subgraph PER["Perception: what the sensors see right now"]
     GF["lidar_ground_filter"]
-    LOD["lidar_object_detector"]
+    VX["voxel_3d"]
+    LC["lidar_cluster"]
     COD["camera_object_detector"]
     TLD["traffic_light_detector"]
   end
@@ -61,9 +59,10 @@ flowchart TD
   BR -->|map| LM
   BR --> GF & COD & TLD & EGO
   EGO -->|/world/ego| LM
-  GF -->|/perception/lidar/nonground| LOD & SG
+  GF -->|/perception/lidar/nonground| VX
+  VX -->|/perception/lidar/voxels| LC & SG
   GF -.->|/perception/lidar/nonground| SM
-  LOD -->|/perception/lidar/objects| TR
+  LC -->|/perception/lidar/objects| TR
   COD -->|/perception/camera/objects| TR
   TLD -->|/perception/camera/traffic_lights| LS
   LM -->|/map/road_ahead| LS & PR & BH & TP
@@ -77,10 +76,9 @@ flowchart TD
   HM -->|/system/health| SM
   SM -->|/vehicle/control| CAR
 ```
-</details>
 
 ### What happens every 100 ms
-1. The LiDAR ground filter removes the road. The static grid updates, and the object detector puts boxes around what's left.
+1. The LiDAR ground filter removes the road, and `voxel_3d` thins what's left into 10 cm cubes. The static grid updates, and `lidar_cluster` puts boxes around groups of points.
 2. The tracker matches boxes to the objects it already knows, works out their speeds, and adds labels from the camera. Prediction adds where each one is going over the next 5 s.
 3. `lane_map` publishes our lane and the rules ahead.
 4. `light_state` works out which light is ours and its colour.
@@ -91,29 +89,33 @@ flowchart TD
 
 ## What's in this folder
 
-| Folder | Package | State |
-|---|---|---|
-| `common/` | `nova_common` | Not started |
-| `map/` | `lane_map` | Not started |
-| `perception/` | `lidar_ground_filter` | **Works** |
-| | `camera_object_detector` | **Works** (needs its YOLO model) |
-| | `traffic_light_detector` | **Works** |
-| | `lidar_object_detector` | Not started |
-| `world_model/` | `ego_state` | Not started |
-| | `static_obstacle_grid` | **Works** (still the old 2D grid) |
-| | `object_tracker` | **Works** (waits for `lidar_object_detector`) |
-| | `prediction`, `light_state` | Not started |
-| `behaviour/` | `behaviour_planner` | Not started |
-| `planning/` | `trajectory_planner` | Not started |
-| `control/` | `trajectory_follower` | Not started |
-| `safety/` | `guardian` | **Works.** Becomes `health_monitor` |
-| | `safety_monitor` | Not started |
-| `msg/` | message packages | Unchanged |
-| `tools/` | tools and bundled libraries | Unchanged |
+| Folder | Package | State | Issue |
+|---|---|---|---|
+| `common/` | `nova_common` | Not started. Shared code: route maths (`frenet.py`), the heartbeat helper | [#17](https://github.com/Nova-UTD/navigator_2026/issues/17), [#15](https://github.com/Nova-UTD/navigator_2026/issues/15) |
+| `map/` | `lane_map` | Not started | [#10](https://github.com/Nova-UTD/navigator_2026/issues/10) (sub-issues [#11](https://github.com/Nova-UTD/navigator_2026/issues/11), [#16](https://github.com/Nova-UTD/navigator_2026/issues/16), [#17](https://github.com/Nova-UTD/navigator_2026/issues/17), [#18](https://github.com/Nova-UTD/navigator_2026/issues/18), [#19](https://github.com/Nova-UTD/navigator_2026/issues/19)) |
+| `perception/` | `lidar_ground_filter` | **Works** | |
+| | `voxel_3d` | Not started | [#12](https://github.com/Nova-UTD/navigator_2026/issues/12) |
+| | `lidar_cluster` | Not started | [#20](https://github.com/Nova-UTD/navigator_2026/issues/20) |
+| | `camera_object_detector` | **Works**, needs fixing | [#13](https://github.com/Nova-UTD/navigator_2026/issues/13) |
+| | `traffic_light_detector` | **Works**, needs checking | [#14](https://github.com/Nova-UTD/navigator_2026/issues/14) |
+| `world_model/` | `ego_state` | Not started | [#9](https://github.com/Nova-UTD/navigator_2026/issues/9) |
+| | `static_obstacle_grid` | **Works** (still the old 2D grid), needs rework | [#21](https://github.com/Nova-UTD/navigator_2026/issues/21) |
+| | `object_tracker` | **Works**, needs rework | [#22](https://github.com/Nova-UTD/navigator_2026/issues/22), [#23](https://github.com/Nova-UTD/navigator_2026/issues/23) |
+| | `prediction` | Not started | [#24](https://github.com/Nova-UTD/navigator_2026/issues/24) |
+| | `light_state` | Not started | [#25](https://github.com/Nova-UTD/navigator_2026/issues/25) |
+| `behaviour/` | `behaviour_planner` | Not started | [#26](https://github.com/Nova-UTD/navigator_2026/issues/26), [#27](https://github.com/Nova-UTD/navigator_2026/issues/27), [#28](https://github.com/Nova-UTD/navigator_2026/issues/28) |
+| `planning/` | `trajectory_planner` | Not started | [#29](https://github.com/Nova-UTD/navigator_2026/issues/29) |
+| `control/` | `trajectory_follower` | Not started | [#30](https://github.com/Nova-UTD/navigator_2026/issues/30) |
+| `safety/` | `guardian` | **Works.** Becomes `health_monitor` | [#15](https://github.com/Nova-UTD/navigator_2026/issues/15) |
+| | `safety_monitor` | Not started | [#31](https://github.com/Nova-UTD/navigator_2026/issues/31) |
+| `msg/` | message packages | New messages are added by the issue that publishes them | |
+| `tools/` | tools and bundled libraries | Unchanged | |
+
+Also: tests and CI [#7](https://github.com/Nova-UTD/navigator_2026/issues/7), the CARLA ground-truth helper [#8](https://github.com/Nova-UTD/navigator_2026/issues/8), the launch file [#32](https://github.com/Nova-UTD/navigator_2026/issues/32), and the campus map [#34](https://github.com/Nova-UTD/navigator_2026/issues/34).
 
 **"Works"** packages came over from the old stack whole and build as before, under their new names and topics. Their messages and logic still change as each one is reworked.
 
-**"Not started"** packages contain only a `README.md`. Each one explains what the package does, the topics it uses, how it should work, the starting settings, when it's done, and **exactly which old code to reuse** (file and line numbers). Read it before writing anything, so you don't start from scratch.
+**"Not started"** packages contain only a short `README.md` that points to the package's GitHub issue. **The issue is the full spec**: what the package does and why, the topics and messages, how it works step by step, starting settings, how to test it, when it's done, and **exactly which old code to reuse** (file and line numbers). Read it before writing anything. When you build the package, replace the short README with the real one.
 
 Everything else from the old stack was deleted. It's still in this repo's first commit (`86a6bde`) and in `Nova-UTD/navigator`.
 
@@ -133,8 +135,9 @@ For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move
 |---|---|---|
 | `/mission/goal` | RViz click or launch setting | `lane_map` |
 | `/map/road_ahead` | `lane_map` | `prediction`, `light_state`, `behaviour_planner`, `trajectory_planner` |
-| `/perception/lidar/nonground` | `lidar_ground_filter` | `lidar_object_detector`, `static_obstacle_grid`, `safety_monitor` |
-| `/perception/lidar/objects` | `lidar_object_detector` | `object_tracker` |
+| `/perception/lidar/nonground` | `lidar_ground_filter` | `voxel_3d`, `safety_monitor` |
+| `/perception/lidar/voxels` | `voxel_3d` | `lidar_cluster`, `static_obstacle_grid` |
+| `/perception/lidar/objects` | `lidar_cluster` | `object_tracker` |
 | `/perception/camera/objects` | `camera_object_detector` | `object_tracker` |
 | `/perception/camera/traffic_lights` | `traffic_light_detector` | `light_state` |
 | `/world/ego` | `ego_state` | everything downstream |
@@ -147,6 +150,8 @@ For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move
 | `/control/command` | `trajectory_follower` | `safety_monitor` |
 | `/vehicle/control` | `safety_monitor` | the car |
 | `/system/health` | `health_monitor` | `safety_monitor` |
+| `/system/heartbeat` | every node, once a second | `health_monitor` |
+| `/safety/status` | `safety_monitor` | RViz, logs, scenario metrics |
 
 Topic names follow `/<layer>/<thing>`.
 
