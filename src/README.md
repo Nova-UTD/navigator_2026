@@ -78,7 +78,7 @@ flowchart TD
 ```
 
 ### What happens every 100 ms
-1. The LiDAR ground filter removes the road, and `voxel_3d` thins what's left into 10 cm cubes. The static grid updates, and `lidar_cluster` puts boxes around groups of points.
+1. The LiDAR ground filter removes the road, and `voxel_3d` builds a 3D voxel volume from what's left (used to project between the cameras, 3D and the grid). The static grid updates, and `lidar_cluster` puts boxes around groups of points.
 2. The tracker matches boxes to the objects it already knows, works out their speeds, and adds labels from the camera. Prediction adds where each one is going over the next 5 s.
 3. `lane_map` publishes our lane and the rules ahead.
 4. `light_state` works out which light is ours and its colour.
