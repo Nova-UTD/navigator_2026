@@ -1,0 +1,42 @@
+# Fail any pull request that adds or changes a file larger than MAX_FILE_KB.
+# Large files (images, videos, datasets, model weights, maps, rosbags) stay in
+# git history forever once merged, even if they are deleted later. Keep them
+# outside the repo (e.g. /storage on the Quad) instead.
+name: File Size Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  MAX_FILE_KB: 1024
+
+jobs:
+  file_size_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check sizes of files changed by this PR
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          if [ -z "$base" ]; then base="$(git rev-parse HEAD~1)"; fi
+          limit=$((MAX_FILE_KB * 1024))
+          failed=0
+          # Only the final tree matters: PRs are squash-merged, so files added
+          # and then removed within the PR never reach the target branch.
+          while IFS= read -r -d '' path; do
+            [ -f "$path" ] || continue
+            size=$(stat -c %s "$path")
+            if [ "$size" -gt "$limit" ]; then
+              echo "::error file=$path::$path is $((size / 1024)) KB (limit ${MAX_FILE_KB} KB). Keep large files out of git."
+              failed=1
+            fi
+          done < <(git diff -z --name-only --diff-filter=AMR "$base" HEAD)
+          if [ "$failed" -ne 0 ]; then
+            echo "Remove the large files from this PR (git rm --cached <file>), add them to .gitignore, and store them outside the repo."
+            exit 1
+          fi
+          echo "All changed files are under ${MAX_FILE_KB} KB."
