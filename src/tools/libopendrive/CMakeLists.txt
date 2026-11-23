@@ -1,26 +1,30 @@
-# Filename:  CMakeLists.txt
-# Author:    Will Heitman
-# Email:     project.nova@utdallas.edu
-# Copyright: 2023, Nova UTD
-# License:   MIT License
+# Builds upstream libOpenDRIVE (in libOpenDRIVE/, never edited by hand) as a
+# colcon package. Other packages use it with:
+#   find_package(OpenDrive REQUIRED)
+#   target_link_libraries(<target> OpenDrive::OpenDrive)
+cmake_minimum_required(VERSION 3.14)
+project(libopendrive)
 
-# No package name is specified above since this is our standard
-# CMakeLists.txt file and will be the same across multiple
-# projects. To use it, just add nova_auto_package as a
-# buildtool_depend in package.xml and copy this file into the root of
-# your package.
+find_package(ament_cmake REQUIRED)
 
-cmake_minimum_required(VERSION 3.5)
-get_filename_component(directory_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-project(${directory_name})
+# The workspace is built without a build type, which means no compiler
+# optimisation. Default this package to Release (-O3) unless one is given.
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
 
-find_package(nova_auto_package REQUIRED)
+# Use the system pugixml (libpugixml-dev). Finding it here, before upstream's
+# CMake runs, stops upstream from downloading its own copy during the build.
+find_package(pugixml REQUIRED CONFIG)
 
+add_subdirectory(libOpenDRIVE)
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_libopendrive test/test_libopendrive.cpp)
+  target_link_libraries(test_libopendrive OpenDrive::OpenDrive)
+  target_compile_definitions(test_libopendrive PRIVATE
+    FIXTURES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures")
+endif()
 
-# Default to C++17 
-if(NOT CMAKE_CXX_STANDARD) 
-    set(CMAKE_CXX_STANDARD 17) 
-endif() 
-
-nova_auto_package()
+ament_package()

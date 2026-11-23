@@ -1,27 +1,29 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+project(libOpenDrive VERSION 0.6.0 DESCRIPTION ".xodr library")
+
+include(FetchContent)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+option(OPENDRIVE_BUILD_TESTS "Build OpenDrive tests" OFF)
+
+find_package(pugixml QUIET CONFIG)
+if(NOT TARGET pugixml::pugixml)
+    if(TARGET pugixml)
+        add_library(pugixml::pugixml ALIAS pugixml)
+    else()
+        FetchContent_Declare(
+            pugixml
+            GIT_REPOSITORY https://github.com/zeux/pugixml.git
+            GIT_TAG v1.14
+        )
+        FetchContent_MakeAvailable(pugixml)
+        add_library(pugixml::pugixml ALIAS pugixml)
+    endif()
 endif()
 
-project(libOpenDrive VERSION 0.1.0 DESCRIPTION ".xodr library")
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(CMAKE_CXX_FLAGS "-Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-
-if(MSVC)
-SET(CMAKE_CXX_FLAGS "/EHsc")
-SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
-else()
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
-endif()
-
-include_directories(include)
-include_directories(Thirdparty)
-
-add_library(OpenDrive SHARED
+set(SOURCES
     src/Geometries/Arc.cpp
     src/Geometries/CubicSpline.cpp
     src/Geometries/Line.cpp
@@ -37,32 +39,85 @@ add_library(OpenDrive SHARED
     src/RefLine.cpp
     src/Road.cpp
     src/RoadMark.cpp
+    src/RoadNetworkMesh.cpp
     src/RoadObject.cpp
+    src/RoadSignal.cpp
     src/RoutingGraph.cpp
-    Thirdparty/pugixml/pugixml.cpp
 )
 
-if(EMSCRIPTEN)
-    set(CMAKE_EXECUTABLE_SUFFIX ".js")
-    add_executable(ModuleOpenDrive
-        src/Embind.cpp
-        Viewer/RoadNetworkMesh.cpp
-        Viewer/ViewerUtils.cpp
-    )
-    target_include_directories(ModuleOpenDrive PUBLIC Viewer)
-    target_link_libraries(ModuleOpenDrive OpenDrive)
-    set_target_properties(ModuleOpenDrive PROPERTIES LINK_FLAGS "\
-        --bind \
-        -s ENVIRONMENT=web \
-        -s MODULARIZE=1 \
-        -s EXPORT_NAME='\"libOpenDrive\"' \
-        -s EXPORTED_RUNTIME_METHODS='[\"cwrap\"]' \
-        -s FORCE_FILESYSTEM=1 \
-        -s ALLOW_MEMORY_GROWTH=1 \
-    ")
+add_library(OpenDrive ${SOURCES})
+add_library(OpenDrive::OpenDrive ALIAS OpenDrive)
+set_target_properties(OpenDrive PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    POSITION_INDEPENDENT_CODE ON
+)
+if(MSVC)
+    target_compile_options(OpenDrive PRIVATE /W3 /EHsc)
+    target_compile_definitions(OpenDrive PRIVATE _USE_MATH_DEFINES)
+else()
+    target_compile_options(OpenDrive PRIVATE -Wall -Wextra)
 endif()
 
-if(NOT EMSCRIPTEN)
-    add_executable(test-xodr test.cpp)
-    target_link_libraries(test-xodr OpenDrive)
+target_link_libraries(OpenDrive PUBLIC pugixml::pugixml)
+
+target_include_directories(
+    OpenDrive PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+
+if(OPENDRIVE_BUILD_TESTS)
+    include(CTest)
+    FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG v3.4.0
+    )
+    FetchContent_MakeAvailable(Catch2)
+    include(Catch)
+
+    add_executable(tests tests/test.cpp)
+    set_target_properties(tests PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+    )
+    target_link_libraries(tests PRIVATE OpenDrive Catch2::Catch2WithMain)
+    catch_discover_tests(tests WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
+
+install(
+    TARGETS OpenDrive
+    EXPORT OpenDriveTargets
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(
+    EXPORT OpenDriveTargets
+    NAMESPACE OpenDrive::
+    FILE OpenDriveTargets.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OpenDrive
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenDriveConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY ExactVersion
+)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/OpenDriveConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenDriveConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OpenDrive
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenDriveConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/OpenDriveConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/OpenDrive
+)

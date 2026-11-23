@@ -57,6 +57,8 @@ RUN apt-get update && apt update && apt upgrade -y && \
     libxext6 \
     #
     ninja-build \
+    # XML parser used by libOpenDRIVE (src/tools/libopendrive)
+    libpugixml-dev \
     #
     ros-humble-diagnostic-updater \
     # =================================
