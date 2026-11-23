@@ -21,3 +21,19 @@ rosbag2*
 
 # X display info written by docker/x11.sh
 .x11/
+
+# Large binaries: keep these out of git (store them on /storage instead)
+*.mp4
+*.mov
+*.avi
+*.pth
+*.pt
+*.onnx
+*.engine
+*.ckpt
+*.db3
+*.mcap
+*.bag
+*.zip
+*.tar
+*.tar.gz

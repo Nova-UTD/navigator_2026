@@ -26,13 +26,15 @@ By following these guidelines, we can fulfill these philosophies, which allow us
 - Use the branching strategy described below. Do not commit directly to the main or dev branch. This applies even to simple changes, like fixing a typo!
 -  Don't merge your own pull requests to main, dev or release branches. Get the software architect or team lead to review your change and merge it.
 -  Commit as often or as infrequently as you like. As long as you're working in a branch (as described below), you can commit even a completely broken change without affecting others.
+-  Pull requests are always **squash-merged**: all the commits in a PR become one commit on dev or main. GitHub only offers the squash option. The PR title becomes the commit message, so give it a clear, descriptive title.
+-  Don't commit large files: images, videos, datasets, model weights, rosbags, point clouds and so on. Once a file is merged it stays in the git history forever, even if it is deleted later, and every clone has to download it. Store these files outside the repo (for example in `/storage` on the Quad) and link to them in the docs. The `file_size_check` CI job fails any PR that adds or changes a file over 1 MB. If your PR contains a large file by mistake, remove it with `git rm --cached <file>`, add it to `.gitignore`, and push again. Because PRs are squash-merged, the file won't reach dev even though it is in your branch's earlier commits.
  
 ### Branching & Feature Branches
 We will maintain both a main branch and a dev branch. main is more stable than dev. When you begin work on a feature or a bugfix, fork the dev branch, implement your change, and create a pull request back to dev once the change is relatively stable and well tested.
  
 Start branch names with '`feature_`', but other than that, name them however you want. Make the name descriptive and helpful. Don't name a branch `feature_zcc` - that name is not helpful to someone trying to understand what the branch is for. However, `feature_zed_camera_color` clearly describes what the branch is for.
  
-Make sure your commits are meaningful and grouped up. Don't commit your entire change history into a single commit, group them up so you have a timeline of your progress.
+Commit as often as you like on your branch. When the PR is merged, its commits are squashed into a single commit on dev, so keep each PR focused on one change.
  
 When we are preparing for a release, we will create a branch off of dev to test and and add bugfixes. This release will start with release_ and end with a version number - for example, `release_1_0`. This allows us to continue merging features into dev while a release is being worked on. Once testing is complete, the release branch will be merged into both main and dev, so that the fixes applied during testing are applied everywhere. The commit in main will be tagged as our new release.
  
