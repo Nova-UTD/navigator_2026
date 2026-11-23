@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  A tiny hand-written map for testing libOpenDRIVE. Every number is chosen so
+  the expected answers can be worked out by hand.
+
+  Road 1: straight, (0,0) to (100,0), heading east. Two driving lanes
+          (-1 eastbound, +1 westbound) and a sidewalk (-2). 30 mph.
+  Road 2: straight, (100,0) to (150,0). Continues road 1 (same lanes).
+  Road 3: a quarter circle, radius 50, from (0,100) heading east to
+          (50,150) heading north. Not connected to the others. At s = 40 a
+          new lane section starts and lane -2 (a turn lane) appears.
+
+      road 1 (100 m)            road 2 (50 m)
+   (0,0) ===================> (100,0) =========> (150,0)
+     +1  <- westbound            +1  <-
+     -1  -> eastbound            -1  ->
+     -2  sidewalk
+-->
+<OpenDRIVE>
+  <header revMajor="1" revMinor="4" name="test_map" version="1.0"/>
+
+  <road name="Road 1" id="1" length="100" junction="-1">
+    <link>
+      <successor elementType="road" elementId="2" contactPoint="start"/>
+    </link>
+    <type s="0" type="town">
+      <speed max="30" unit="mph"/>
+    </type>
+    <planView>
+      <geometry s="0" x="0" y="0" hdg="0" length="100">
+        <line/>
+      </geometry>
+    </planView>
+    <lanes>
+      <laneSection s="0">
+        <left>
+          <lane id="1" type="driving" level="false">
+            <link><successor id="1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+            <roadMark sOffset="0" type="solid" weight="standard" color="standard" width="0.15"/>
+          </lane>
+        </left>
+        <center>
+          <lane id="0" type="none" level="false">
+            <roadMark sOffset="0" type="solid" weight="standard" color="yellow" width="0.15"/>
+          </lane>
+        </center>
+        <right>
+          <lane id="-1" type="driving" level="false">
+            <link><successor id="-1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+            <roadMark sOffset="0" type="solid" weight="standard" color="standard" width="0.15"/>
+          </lane>
+          <lane id="-2" type="sidewalk" level="false">
+            <width sOffset="0" a="2.0" b="0" c="0" d="0"/>
+            <roadMark sOffset="0" type="curb" weight="standard" color="standard" width="0.15"/>
+          </lane>
+        </right>
+      </laneSection>
+    </lanes>
+  </road>
+
+  <road name="Road 2" id="2" length="50" junction="-1">
+    <link>
+      <predecessor elementType="road" elementId="1" contactPoint="end"/>
+    </link>
+    <planView>
+      <geometry s="0" x="100" y="0" hdg="0" length="50">
+        <line/>
+      </geometry>
+    </planView>
+    <lanes>
+      <laneSection s="0">
+        <left>
+          <lane id="1" type="driving" level="false">
+            <link><predecessor id="1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+          </lane>
+        </left>
+        <center>
+          <lane id="0" type="none" level="false"/>
+        </center>
+        <right>
+          <lane id="-1" type="driving" level="false">
+            <link><predecessor id="-1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+          </lane>
+        </right>
+      </laneSection>
+    </lanes>
+  </road>
+
+  <!-- length = 50 * pi / 2: a quarter of a circle of radius 50 -->
+  <road name="Road 3" id="3" length="78.53981633974483" junction="-1">
+    <planView>
+      <geometry s="0" x="0" y="100" hdg="0" length="78.53981633974483">
+        <arc curvature="0.02"/>
+      </geometry>
+    </planView>
+    <lanes>
+      <laneSection s="0">
+        <center>
+          <lane id="0" type="none" level="false"/>
+        </center>
+        <right>
+          <lane id="-1" type="driving" level="false">
+            <link><successor id="-1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+          </lane>
+        </right>
+      </laneSection>
+      <laneSection s="40">
+        <center>
+          <lane id="0" type="none" level="false"/>
+        </center>
+        <right>
+          <lane id="-1" type="driving" level="false">
+            <link><predecessor id="-1"/></link>
+            <width sOffset="0" a="3.5" b="0" c="0" d="0"/>
+          </lane>
+          <lane id="-2" type="driving" level="false">
+            <width sOffset="0" a="3.0" b="0" c="0" d="0"/>
+          </lane>
+        </right>
+      </laneSection>
+    </lanes>
+  </road>
+</OpenDRIVE>

@@ -2,14 +2,16 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>libopendrive</name>
-  <version>0.0.0</version>
-  <description>libOpenDRIVE, modified to integrate with Navigator</description>
-  <maintainer email="joshmackwilliams@protonmail.com">Joshua Williams</maintainer>
-  <license>MIT License</license>
+  <version>0.6.0</version>
+  <description>Upstream libOpenDRIVE (pageldev/libOpenDRIVE), pinned to one commit, built as a colcon package</description>
+  <maintainer email="project.nova@utdallas.edu">Nova UTD</maintainer>
+  <license>Apache-2.0</license>
 
-  <buildtool_depend>nova_auto_package</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>libboost</depend>
+  <depend>pugixml-dev</depend>
+
+  <test_depend>ament_cmake_gtest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
