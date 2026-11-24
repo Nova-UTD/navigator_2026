@@ -92,7 +92,7 @@ flowchart TD
 | Folder | Package | State | Issue |
 |---|---|---|---|
 | `common/` | `nova_common` | Not started. Shared code: route maths (`frenet.py`), the heartbeat helper | [#17](https://github.com/Nova-UTD/navigator_2026/issues/17), [#15](https://github.com/Nova-UTD/navigator_2026/issues/15) |
-| `map/` | `lane_map` | Not started | [#10](https://github.com/Nova-UTD/navigator_2026/issues/10) (sub-issues [#11](https://github.com/Nova-UTD/navigator_2026/issues/11), [#16](https://github.com/Nova-UTD/navigator_2026/issues/16), [#17](https://github.com/Nova-UTD/navigator_2026/issues/17), [#18](https://github.com/Nova-UTD/navigator_2026/issues/18), [#19](https://github.com/Nova-UTD/navigator_2026/issues/19)) |
+| `map/` | `lane_map` | **Works:** loads any map as lanes (#11). Routing and the road ahead not started | [#10](https://github.com/Nova-UTD/navigator_2026/issues/10) (sub-issues [#11](https://github.com/Nova-UTD/navigator_2026/issues/11), [#16](https://github.com/Nova-UTD/navigator_2026/issues/16), [#17](https://github.com/Nova-UTD/navigator_2026/issues/17), [#18](https://github.com/Nova-UTD/navigator_2026/issues/18), [#19](https://github.com/Nova-UTD/navigator_2026/issues/19)) |
 | `perception/` | `lidar_ground_filter` | **Works** | |
 | | `voxel_3d` | Not started | [#12](https://github.com/Nova-UTD/navigator_2026/issues/12) |
 | | `lidar_cluster` | Not started | [#20](https://github.com/Nova-UTD/navigator_2026/issues/20) |
@@ -128,7 +128,7 @@ source install/setup.bash
 ros2 launch launches/launch.carla.py
 ```
 
-For now this starts only `lidar_ground_filter` and RViz, so the car doesn't move. New nodes are added to `launches/launch.carla.py` as they're written.
+For now this starts only `lane_map`, `lidar_ground_filter` and RViz, so the car doesn't move. New nodes are added to `launches/launch.carla.py` as they're written.
 
 ## Topics
 | Topic | Published by | Read by |
