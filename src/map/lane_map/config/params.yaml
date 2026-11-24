@@ -1,0 +1,36 @@
+lane_map:
+  ros__parameters:
+    # Where the map comes from: "carla" (/carla/world_info) or "file" (map_file).
+    map_source: carla
+    # Path to a .xodr file, used when map_source is "file".
+    map_file: ""
+    # Frame the lanes are published in. The CARLA bridge's map frame uses the
+    # map file's own coordinates, so no conversion is needed.
+    frame_id: map
+    # s; how often to check whether a new map has arrived. The check is just a
+    # name and size comparison, so it costs nothing; this is the most a new map
+    # waits before it's built.
+    check_period_s: 0.1
+
+    # m between centre-line points.
+    sample_spacing_m: 0.5
+    # m/s (13.4 = 30 mph); speed limit for roads the map gives none.
+    default_speed_limit_mps: 13.4
+    # m; lanes never wider than this are dropped (zero-width placeholders).
+    min_lane_width_m: 0.05
+    # m; where a lane ends must be within this distance of its successor's start
+    # along the road, and sideways inside the successor's width plus this (so a
+    # lane that ends by merging into the next one still links to it).
+    connect_tolerance_m: 0.5
+    # rad (60 deg); and point within this angle of the lane's last heading.
+    connect_heading_tolerance_rad: 1.05
+    # m; and be within this height (so a bridge above doesn't count).
+    connect_height_tolerance_m: 1.0
+
+    # Draw every n-th centre-line point in RViz (2 = every 1 m). Higher keeps
+    # the marker message small on very big maps.
+    viz_point_step: 2
+    # s; re-send the drawing this often while something subscribes (0 = only
+    # once per map). RViz drops markers that arrive before it has the
+    # map -> base_link transform, which happens when everything starts together.
+    viz_republish_period_s: 5.0

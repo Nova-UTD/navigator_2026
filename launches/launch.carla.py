@@ -17,11 +17,13 @@ def generate_launch_description():
         [
             # Set the global config file as a parameter for all nodes.
             launch_ros.actions.SetParameter(name="global_config", value="/navigator/param/global_parameters.yaml"),
+            # MAP
+            lane_map,                    # /carla/world_info --> /map/lanes/viz
             # PERCEPTION
             lidar_ground_filter,         # /lidar --> /perception/lidar/nonground
             # traffic_light_detector,
             # camera_object_detector,    # YOLO model required - disabled until model present
-            # MAP, WORLD MODEL, BEHAVIOUR, PLANNING, CONTROL, SAFETY
+            # WORLD MODEL, BEHAVIOUR, PLANNING, CONTROL, SAFETY
             # VISUALISATION
             rviz,
         ]

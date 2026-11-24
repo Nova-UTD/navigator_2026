@@ -22,6 +22,13 @@ clock = Node(
     executable='clock_node'
 )
 
+lane_map = Node(
+    package='lane_map',
+    executable='lane_map_node',
+    name='lane_map',
+    parameters=[NAVIGATOR_DIR + 'src/map/lane_map/config/params.yaml'],
+)
+
 lidar_ground_filter = Node(
     package='lidar_ground_filter',
     executable='lidar_ground_filter',
